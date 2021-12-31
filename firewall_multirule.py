@@ -31,7 +31,7 @@ def main():
         m_fullpath = m.resolve()
         print(m_fullpath)
     print('')
-    
+
     choice = ''
     while choice.lower() != 'y':
         choice = input('Create blocking rules in Windows Firewall (y/n)?')
@@ -41,11 +41,11 @@ def main():
     for m in matches:
         m_fullpath = m.resolve()
         print(f'Creating rules for {m_fullpath}...', end='')
-        #i = input('')
         try:
             subprocess.run(['netsh', 'advfirewall', 'firewall', 'add', 'rule',
                            fr'name="autoadded_block_{m}"', 'dir=out', fr'program="{m_fullpath}"', 'action=block'], check=True)
-            #subprocess.run(['netsh', 'advfirewall', 'firewall', 'add', 'rule', fr'name="autoadded_block_{m}"', 'dir=in', fr'program="{m_fullpath}"', 'action=block'], check=True)
+            subprocess.run(['netsh', 'advfirewall', 'firewall', 'add', 'rule',
+                           fr'name="autoadded_block_{m}"', 'dir=in', fr'program="{m_fullpath}"', 'action=block'], check=True)
         except subprocess.CalledProcessError as e:
             print(e)
         print('Done.')
