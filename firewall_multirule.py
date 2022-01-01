@@ -1,5 +1,5 @@
 # Looks for executable files within a path and its subdirectories,
-# then creates Windows Firewall rules to block their internet access
+# then creates Windows Firewall rules to allow/block their internet access
 
 import subprocess
 import sys
@@ -7,6 +7,7 @@ import ctypes
 from pathlib import Path
 
 extension = 'exe'
+action = 'block' # allow or block
 
 
 def main():
@@ -34,7 +35,7 @@ def main():
 
     choice = ''
     while choice.lower() != 'y':
-        choice = input('Create blocking rules in Windows Firewall (y/n)?')
+        choice = input(f"Create '{action}' rules in Windows Firewall (y/n)?")
         if choice.lower() == 'n':
             quit()
 
@@ -43,9 +44,9 @@ def main():
         print(f'Creating rules for {m_fullpath}...', end='')
         try:
             subprocess.run(['netsh', 'advfirewall', 'firewall', 'add', 'rule',
-                           fr'name="autoadded_block_{m}"', 'dir=out', fr'program="{m_fullpath}"', 'action=block'], check=True)
+                           fr'name="autoadded_{action}_{m}"', 'dir=out', fr'program="{m_fullpath}"', f'action={action}'], check=True)
             subprocess.run(['netsh', 'advfirewall', 'firewall', 'add', 'rule',
-                           fr'name="autoadded_block_{m}"', 'dir=in', fr'program="{m_fullpath}"', 'action=block'], check=True)
+                           fr'name="autoadded_{action}_{m}"', 'dir=in', fr'program="{m_fullpath}"', f'action={action}'], check=True)
         except subprocess.CalledProcessError as e:
             print(e)
         print('Done.')
